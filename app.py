@@ -23,7 +23,7 @@ varlist = [
 url = 'https://raw.githubusercontent.com/plotly/datasets/master/' \
       'geojson-counties-fips.json'
 
-with urlopen() as response:
+with urlopen(url) as response:
     counties = json.load(response)
 
 # https://www.geeksforgeeks.org/dataframe-read_pickle-method-in-pandas/
