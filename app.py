@@ -1,24 +1,26 @@
 import json
 import dash
+from urllib.request import urlopen
+
+import pandas as pd
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
-import pandas as pd
-from urllib.request import urlopen
 
+from util import util as u
 
 # Global variables
 tabtitle = 'Virginia Counties'
 sourceurl = 'https://www.kaggle.com/muonneutrino/us-census-demographic-data'
 githublink = 'https://github.com/cahn1/305-virginia-census-data/tree/update1'
-varlist = [
-    'TotalPop', 'Men', 'Women', 'Hispanic', 'White', 'Black', 'Native',
-    'Asian', 'Pacific', 'VotingAgeCitizen', 'Income', 'IncomeErr',
-    'IncomePerCap', 'IncomePerCapErr', 'Poverty', 'ChildPoverty',
-    'Professional', 'Service', 'Office', 'Construction', 'Production',
-    'Drive', 'Carpool', 'Transit', 'Walk', 'OtherTransp', 'WorkAtHome',
-    'MeanCommute', 'Employed', 'PrivateWork', 'PublicWork', 'SelfEmployed',
-    'FamilyWork', 'Unemployment', 'RUCC_2013']
+# options = [
+#     'TotalPop', 'Men', 'Women', 'Hispanic', 'White', 'Black', 'Native',
+#     'Asian', 'Pacific', 'VotingAgeCitizen', 'Income', 'IncomeErr',
+#     'IncomePerCap', 'IncomePerCapErr', 'Poverty', 'ChildPoverty',
+#     'Professional', 'Service', 'Office', 'Construction', 'Production',
+#     'Drive', 'Carpool', 'Transit', 'Walk', 'OtherTransp', 'WorkAtHome',
+#     'MeanCommute', 'Employed', 'PrivateWork', 'PublicWork', 'SelfEmployed',
+#     'FamilyWork', 'Unemployment', 'RUCC_2013']
 
 url = 'https://raw.githubusercontent.com/plotly/datasets/master/' \
       'geojson-counties-fips.json'
@@ -29,6 +31,13 @@ with urlopen(url) as response:
 # https://www.geeksforgeeks.org/dataframe-read_pickle-method-in-pandas/
 df = pd.read_pickle('resources/va-stats.pkl')
 
+print(f'cahn0={df}')
+s1 = df['FIPS'].sample(5)
+print(f'df["FIPS"].sample(5)={s1}')
+print(f'df.columns={df.columns}')
+
+options = u.pick_options(df)
+print(f'cahn4={options}')
 
 # app server config
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -45,13 +54,16 @@ app.layout = html.Div(children=[
             html.H6('Select census variable:'),
             dcc.Dropdown(
                 id='stats-drop',
-                options=[{'label': i, 'value': i} for i in varlist],
-                value='MeanCommute'),],
-            className='three columns'),
+                options=[{'label': i, 'value': i} for i in options],
+                value='MeanCommute'
+            ),
+        ],
+        className='three columns'),
         # right side
         html.Div([
             dcc.Graph(id='va-map')],
-            className='nine columns'),
+            className='nine columns'
+        ),
     ],
     className='twelve columns'),
     html.Br(),
@@ -64,15 +76,15 @@ app.layout = html.Div(children=[
 @app.callback(
     Output('va-map', 'figure'),
     [Input('stats-drop', 'value')])
-def display_results(selected_value):
-    valmin = df[selected_value].min()
-    valmax = df[selected_value].max()
+def display_results(option):
+    valmin = df[option].min()
+    valmax = df[option].max()
     fig = go.Figure(
         go.Choroplethmapbox(
             geojson=counties,
             locations=df['FIPS'],
-            z=df[selected_value],
-            colorscale='Blues',
+            z=df[option],
+            colorscale='oxy',
             text=df['County'],
             zmin=valmin,
             zmax=valmax,
