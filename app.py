@@ -28,6 +28,7 @@ with urlopen(url) as response:
 # add 'FIPS' column to df:
 # http://students.washington.edu/ayandm/tutfiles/FIPSConversion.pdf
 df = pd.read_csv('assets/census/acs2017_census_tract_data.csv')
+df = df.drop(labels=range(50000, 74000), axis=0)
 df['FIPS'] = df['County'].apply(u.pick_fip)
 options = u.pick_options(df)
 
@@ -50,14 +51,14 @@ app.layout = html.Div(children=[
                 value='Carpool'
             ),
         ],
-        className='three columns'),
+            className='three columns'),
         # right side
         html.Div([
             dcc.Graph(id='us-map')],
             className='nine columns'
         ),
     ],
-    className='twelve columns'),
+        className='twelve columns'),
     html.Br(),
     html.A('Code on Github', href=githublink),
     html.Br(),

@@ -5,7 +5,8 @@ import pandas as pd
 fips_master = pd.read_csv('resources/county_fips_master.csv')[
     ['fips', 'county_name']]
 county_fips = json.loads(fips_master.to_json(orient='records'))
-
+fips = fips_master.rename(
+    columns={'fips': 'FIPS', 'county_name': 'County'})
 
 def pick_options(df):
     valid_options = []
@@ -20,3 +21,7 @@ def pick_fip(county):
         if record.get('county_name', '').lower() == county.lower():
             return str(record.get('fips', '')).zfill(5)
     return ''
+
+
+def find_fip(county):
+    return fips[fips['County'] == county]['FIPS']
