@@ -48,7 +48,7 @@ app.layout = html.Div(children=[
             dcc.Dropdown(
                 id='stats-drop',
                 options=[{'label': i, 'value': i} for i in options],
-                value='Carpool'
+                value='Income'
             ),
         ],
             className='three columns'),
