@@ -24,12 +24,54 @@ url = 'https://raw.githubusercontent.com/plotly/datasets/master/' \
 with urlopen(url) as response:
     counties = json.load(response)
 
+#-------------
+
+fips_master = pd.read_csv('resources/county_fips_master.csv')[
+    ['fips', 'county_name']]
+county_fips = json.loads(fips_master.to_json(orient='records'))
+
+
+def pick_options(df):
+    valid_options = []
+    for col in df:
+        if df[col].dtype == float or df[col].dtype == int:
+            valid_options.append(col)
+    return valid_options
+
+
+def pick_fip(county):
+    for record in county_fips:
+        if record.get('county_name', '').lower() == county.lower():
+            return str(record.get('fips', '')).zfill(5)
+    return ''
+
+
+
+
+
+
+#-------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # https://www.geeksforgeeks.org/dataframe-read_pickle-method-in-pandas/
 # add 'FIPS' column to df:
 # http://students.washington.edu/ayandm/tutfiles/FIPSConversion.pdf
 df = pd.read_csv('assets/census/acs2017_census_tract_data.csv')
-df['FIPS'] = df['County'].apply(u.pick_fip)
-options = u.pick_options(df)
+df['FIPS'] = df['County'].apply(pick_fip)
+options = pick_options(df)
 
 # app server config
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
