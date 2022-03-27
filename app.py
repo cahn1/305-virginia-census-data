@@ -28,7 +28,7 @@ with urlopen(url) as response:
 # add 'FIPS' column to df:
 # http://students.washington.edu/ayandm/tutfiles/FIPSConversion.pdf
 df = pd.read_csv('assets/census/acs2017_census_tract_data.csv')
-df = df.drop(labels=range(50000, 74000), axis=0)
+df = df.drop(labels=range(60000, 74000), axis=0)
 df['FIPS'] = df['County'].apply(u.pick_fip)
 options = u.pick_options(df)
 
@@ -48,7 +48,7 @@ app.layout = html.Div(children=[
             dcc.Dropdown(
                 id='stats-drop',
                 options=[{'label': i, 'value': i} for i in options],
-                value='Income'
+                value='Carpool'
             ),
         ],
             className='three columns'),
