@@ -28,7 +28,7 @@ with urlopen(url) as response:
 # add 'FIPS' column to df:
 # http://students.washington.edu/ayandm/tutfiles/FIPSConversion.pdf
 df = pd.read_csv('assets/census/acs2017_census_tract_data.csv')
-df = df.drop(labels=range(450000, 74000), axis=0)
+df = df.drop(labels=range(400000, 74000), axis=0)
 df['FIPS'] = df['County'].apply(u.pick_fip)
 options = u.pick_options(df)
 
